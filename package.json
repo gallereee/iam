@@ -34,9 +34,11 @@
     "@nestjs/platform-express": "^8.0.0",
     "@prisma/client": "^3.11.1",
     "lodash": "^4.17.21",
+    "nest-winston": "^1.6.2",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "winston": "^3.6.0"
   },
   "devDependencies": {
     "@bd-dm/eslint-config-node": "^0.0.3",
