@@ -5,9 +5,9 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
-	"prisma": {
-		"schema": "node_modules/@gallereee/db-client/dist/schema.prisma"
-	},
+  "prisma": {
+    "schema": "node_modules/@gallereee/db-client/dist/schema.prisma"
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
@@ -16,21 +16,24 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-		"lint": "eslint .",
-		"lint-fix": "eslint . --fix",
+    "lint": "eslint .",
+    "lint-fix": "eslint . --fix",
     "test": "jest",
-		"db": "npx prisma db",
-		"db:generate": "npx prisma generate",
-		"db:migrate": "npx prisma migrate deploy",
-		"postinstall": "npm run db:generate"
+    "db": "npx prisma db",
+    "db:generate": "npx prisma generate",
+    "db:migrate": "npx prisma migrate deploy",
+    "postinstall": "npm run db:generate"
   },
   "dependencies": {
-    "@gallereee/db-client": "^0.0.13",
+    "@gallereee/db-client": "^0.0.14",
     "@nestjs/common": "^8.0.0",
+    "@nestjs/config": "^2.0.0",
     "@nestjs/core": "^8.0.0",
+    "@nestjs/mapped-types": "*",
     "@nestjs/microservices": "^8.4.3",
     "@nestjs/platform-express": "^8.0.0",
     "@prisma/client": "^3.11.1",
+    "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"
@@ -42,6 +45,7 @@
     "@nestjs/testing": "^8.0.0",
     "@types/express": "^4.17.13",
     "@types/jest": "27.4.1",
+    "@types/lodash": "^4.14.181",
     "@types/node": "^16.0.0",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
