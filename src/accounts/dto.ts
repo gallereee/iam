@@ -1,4 +1,5 @@
 import { AccountProviderType } from "@gallereee/db-client";
+import { TCPRequestCommon } from "types";
 
 const CMD_ACCOUNTS_CREATE = "accounts/create";
 
@@ -11,7 +12,7 @@ interface CreateAccountDataTelegramUser extends CreateAccountDataBase {
 	username?: string;
 }
 
-interface CreateAccountTelegramUserDto {
+interface CreateAccountTelegramUserDto extends TCPRequestCommon {
 	providerType: typeof AccountProviderType.TELEGRAM_USER;
 	data: CreateAccountDataTelegramUser;
 }
