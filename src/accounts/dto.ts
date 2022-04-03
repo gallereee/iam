@@ -8,7 +8,7 @@ interface CreateAccountDataBase {
 
 interface CreateAccountDataTelegramUser extends CreateAccountDataBase {
 	chatId: string;
-	username: string;
+	username?: string;
 }
 
 interface CreateAccountTelegramUserDto {

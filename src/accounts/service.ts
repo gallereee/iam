@@ -6,6 +6,7 @@ import { PrismaService } from "prisma/service";
 import AccountFindUniqueArgs = Prisma.AccountFindUniqueArgs;
 import { isNull } from "lodash";
 import { AccountProvidersService } from "accountProviders/service";
+import { isUndefined } from "lodash";
 
 const TELEGRAM_USERNAME_PREFIX = "tg";
 
@@ -21,6 +22,7 @@ export class AccountsService {
 		username: telegramUsername,
 		chatId,
 	}: CreateAccountDataTelegramUser): Promise<Account> {
+		const hasTelegramUsername = !isUndefined(telegramUsername);
 		const existingAccountProvider = await this.accountProvidersService.get(
 			AccountProviderType.TELEGRAM_USER,
 			userId
@@ -30,14 +32,17 @@ export class AccountsService {
 			return existingAccountProvider.account;
 		}
 
-		const existingAccountWithUsername = await this.get({
-			where: { username: telegramUsername },
-		});
-		const username = isNull(existingAccountWithUsername)
-			? telegramUsername
-			: `${TELEGRAM_USERNAME_PREFIX}-${chatId}`;
+		const existingAccountWithUsername = !hasTelegramUsername
+			? null
+			: await this.get({
+					where: { username: telegramUsername },
+			  });
+		const username =
+			isNull(existingAccountWithUsername) && hasTelegramUsername
+				? telegramUsername
+				: `${TELEGRAM_USERNAME_PREFIX}-${chatId}`;
 
-		this.prisma.account.create({
+		return this.prisma.account.create({
 			data: {
 				username,
 				accountProviders: {
