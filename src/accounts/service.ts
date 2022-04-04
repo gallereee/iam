@@ -3,10 +3,10 @@ import { CreateAccountDataTelegramUser, CreateAccountDto } from "accounts/dto";
 import { Account, AccountProviderType, Prisma } from "@gallereee/db-client";
 import { RpcException } from "@nestjs/microservices";
 import { PrismaService } from "prisma/service";
-import AccountFindUniqueArgs = Prisma.AccountFindUniqueArgs;
-import { isNull } from "lodash";
+import { isNull, isUndefined } from "lodash";
 import { AccountProvidersService } from "accountProviders/service";
-import { isUndefined } from "lodash";
+
+import AccountFindUniqueArgs = Prisma.AccountFindUniqueArgs;
 
 const TELEGRAM_USERNAME_PREFIX = "tg";
 
@@ -71,7 +71,7 @@ export class AccountsService {
 				return this.createOrGetTelegramUserAccount(data);
 			}
 			default: {
-				throw new RpcException("Wrong AccountProvider type: " + providerType);
+				throw new RpcException(`Wrong AccountProvider type: ${providerType}`);
 			}
 		}
 	}
