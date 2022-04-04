@@ -19,5 +19,5 @@ interface CreateAccountTelegramUserDto extends TCPRequestCommon {
 
 type CreateAccountDto = CreateAccountTelegramUserDto;
 
-export { CMD_ACCOUNTS_CREATE };
+export { CMD_ACCOUNTS_CREATE, AccountProviderType };
 export type { CreateAccountDto, CreateAccountDataTelegramUser };
