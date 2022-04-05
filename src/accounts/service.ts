@@ -1,11 +1,14 @@
 import { Injectable } from "@nestjs/common";
-import { CreateAccountDataTelegramUser, CreateAccountDto } from "accounts/dto";
+import {
+	IsUserExistsData,
+	SignupDataTelegramUser,
+	SignupDto,
+} from "accounts/dto";
 import { Account, AccountProviderType, Prisma } from "@gallereee/db-client";
 import { RpcException } from "@nestjs/microservices";
 import { PrismaService } from "prisma/service";
 import { isNull, isUndefined } from "lodash";
 import { AccountProvidersService } from "accountProviders/service";
-
 import AccountFindUniqueArgs = Prisma.AccountFindUniqueArgs;
 
 const TELEGRAM_USERNAME_PREFIX = "tg";
@@ -17,19 +20,33 @@ export class AccountsService {
 		private readonly accountProvidersService: AccountProvidersService
 	) {}
 
-	async createOrGetTelegramUserAccount({
-		userId,
-		username: telegramUsername,
-		chatId,
-	}: CreateAccountDataTelegramUser): Promise<Account> {
-		const hasTelegramUsername = !isUndefined(telegramUsername);
+	isUsernameValid(username: Account["username"]): boolean {
+		return /^[A-Za-z0-9]/.test(username);
+	}
+
+	async isUserExists({
+		externalAccountId,
+	}: IsUserExistsData): Promise<boolean> {
 		const existingAccountProvider = await this.accountProvidersService.get(
 			AccountProviderType.TELEGRAM_USER,
-			userId
+			externalAccountId
 		);
 
-		if (!isNull(existingAccountProvider)) {
-			return existingAccountProvider.account;
+		return !isNull(existingAccountProvider);
+	}
+
+	async createTelegramUserAccount({
+		externalAccountId,
+		username: telegramUsername,
+		chatId,
+	}: SignupDataTelegramUser): Promise<Account> {
+		const hasTelegramUsername = !isUndefined(telegramUsername);
+		const isTelegramUserExists = await this.isUserExists({
+			externalAccountId,
+		});
+
+		if (isTelegramUserExists) {
+			throw new RpcException("Пользватель уже зарегистрирован");
 		}
 
 		const existingAccountWithUsername = !hasTelegramUsername
@@ -49,9 +66,9 @@ export class AccountsService {
 					create: [
 						{
 							type: AccountProviderType.TELEGRAM_USER,
-							externalAccountId: userId,
+							externalAccountId,
 							externalAccountData: {
-								userId,
+								externalAccountId,
 								chatId,
 								username: telegramUsername,
 							},
@@ -62,13 +79,18 @@ export class AccountsService {
 		});
 	}
 
-	async createAccount({
-		providerType,
-		data,
-	}: CreateAccountDto): Promise<Account> {
+	async createAccount({ providerType, data }: SignupDto): Promise<Account> {
+		const isUsernameValid = this.isUsernameValid(data.username);
+
+		if (!isUsernameValid) {
+			throw new RpcException(
+				"Неверное имя пользователя. Используйте латинские символы и цифры."
+			);
+		}
+
 		switch (providerType) {
 			case "TELEGRAM_USER": {
-				return this.createOrGetTelegramUserAccount(data);
+				return this.createTelegramUserAccount(data);
 			}
 			default: {
 				throw new RpcException(`Wrong AccountProvider type: ${providerType}`);

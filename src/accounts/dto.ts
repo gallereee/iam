@@ -1,23 +1,51 @@
 import { AccountProviderType } from "@gallereee/db-client";
 import { TCPRequestCommon } from "types";
 
-const CMD_ACCOUNTS_CREATE = "accounts/create";
+const CMD_ACCOUNTS_SIGNUP = "accounts/signup";
+const CMD_ACCOUNTS_LOGIN = "accounts/login";
+const CMD_ACCOUNTS_IS_USERNAME_AVAILABLE = "accounts/isUsernameAvailable";
+const CMD_ACCOUNTS_IS_USER_EXISTS = "accounts/isUserExists";
 
-interface CreateAccountDataBase {
-	userId: string;
+interface SignupDataBase {
+	externalAccountId: string;
 }
 
-interface CreateAccountDataTelegramUser extends CreateAccountDataBase {
+interface SignupDataTelegramUser extends SignupDataBase {
 	chatId: string;
 	username?: string;
 }
 
-interface CreateAccountTelegramUserDto extends TCPRequestCommon {
+interface SignupTelegramUserDto {
 	providerType: typeof AccountProviderType.TELEGRAM_USER;
-	data: CreateAccountDataTelegramUser;
+	data: SignupDataTelegramUser;
 }
 
-type CreateAccountDto = CreateAccountTelegramUserDto;
+interface LoginTelegramUserDto extends SignupDataBase {
+	providerType: typeof AccountProviderType.TELEGRAM_USER;
+}
 
-export { CMD_ACCOUNTS_CREATE, AccountProviderType };
-export type { CreateAccountDto, CreateAccountDataTelegramUser };
+type SignupDto = SignupTelegramUserDto & TCPRequestCommon;
+type LoginDto = LoginTelegramUserDto & TCPRequestCommon;
+
+interface IsUsernameAvailableDto extends TCPRequestCommon {
+	username: string;
+}
+
+interface IsUserExistsData extends Pick<SignupDataBase, "externalAccountId"> {}
+interface IsUserExistsDto extends IsUserExistsData, TCPRequestCommon {}
+
+export {
+	CMD_ACCOUNTS_SIGNUP,
+	CMD_ACCOUNTS_LOGIN,
+	CMD_ACCOUNTS_IS_USERNAME_AVAILABLE,
+	CMD_ACCOUNTS_IS_USER_EXISTS,
+	AccountProviderType,
+};
+export type {
+	SignupDto,
+	LoginDto,
+	SignupDataTelegramUser,
+	IsUsernameAvailableDto,
+	IsUserExistsData,
+	IsUserExistsDto,
+};
