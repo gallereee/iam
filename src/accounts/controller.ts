@@ -56,11 +56,7 @@ export class AccountsController {
 			);
 		}
 
-		const existingAccount = await this.accountsService.get({
-			where: { username },
-		});
-
-		return isNull(existingAccount);
+		return this.accountsService.isUsernameAvailable(username);
 	}
 
 	@MessagePattern({ cmd: CMD_ACCOUNTS_IS_USER_EXISTS })

@@ -7,11 +7,9 @@ import {
 import { Account, AccountProviderType, Prisma } from "@gallereee/db-client";
 import { RpcException } from "@nestjs/microservices";
 import { PrismaService } from "prisma/service";
-import { isNull, isUndefined } from "lodash";
+import { isNull } from "lodash";
 import { AccountProvidersService } from "accountProviders/service";
 import AccountFindUniqueArgs = Prisma.AccountFindUniqueArgs;
-
-const TELEGRAM_USERNAME_PREFIX = "tg";
 
 @Injectable()
 export class AccountsService {
@@ -37,10 +35,9 @@ export class AccountsService {
 
 	async createTelegramUserAccount({
 		externalAccountId,
-		username: telegramUsername,
+		username,
 		chatId,
 	}: SignupDataTelegramUser): Promise<Account> {
-		const hasTelegramUsername = !isUndefined(telegramUsername);
 		const isTelegramUserExists = await this.isUserExists({
 			externalAccountId,
 		});
@@ -49,15 +46,11 @@ export class AccountsService {
 			throw new RpcException("Пользватель уже зарегистрирован");
 		}
 
-		const existingAccountWithUsername = !hasTelegramUsername
-			? null
-			: await this.get({
-					where: { username: telegramUsername },
-			  });
-		const username =
-			isNull(existingAccountWithUsername) && hasTelegramUsername
-				? telegramUsername
-				: `${TELEGRAM_USERNAME_PREFIX}-${chatId}`;
+		const isUsernameAvailable = await this.isUsernameAvailable(username);
+
+		if (!isUsernameAvailable) {
+			throw new RpcException("Такое имя пользователя уже занято");
+		}
 
 		return this.prisma.account.create({
 			data: {
@@ -70,7 +63,7 @@ export class AccountsService {
 							externalAccountData: {
 								externalAccountId,
 								chatId,
-								username: telegramUsername,
+								username,
 							},
 						},
 					],
@@ -100,5 +93,13 @@ export class AccountsService {
 
 	async get(data: AccountFindUniqueArgs) {
 		return this.prisma.account.findUnique(data);
+	}
+
+	async isUsernameAvailable(username: Account["username"]): Promise<boolean> {
+		const existingAccount = await this.get({
+			where: { username },
+		});
+
+		return isNull(existingAccount);
 	}
 }
