@@ -30,10 +30,11 @@
     "db:migrate": "npx prisma migrate deploy",
     "prepublishOnly": "npm run lint",
     "preversion": "npm run lint",
-    "prepare": "npm run build-package"
+    "prepare": "npm run build-package",
+		"postinstall": "npx prisma generate"
   },
   "dependencies": {
-    "@gallereee/db-client": "^0.0.16",
+    "@gallereee/db-client": "^0.0.17",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.0.0",
     "@nestjs/core": "^8.0.0",
