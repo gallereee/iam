@@ -3,46 +3,85 @@ import { IAM_SERVICE } from "IAM/constants";
 import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
 import {
+	CMD_ACCOUNTS_GET,
+	CMD_ACCOUNTS_GET_BY_USERNAME,
 	CMD_ACCOUNTS_IS_USER_EXISTS,
 	CMD_ACCOUNTS_IS_USERNAME_AVAILABLE,
 	CMD_ACCOUNTS_LOGIN,
 	CMD_ACCOUNTS_SIGNUP,
-	IsUserExistsDto,
-	IsUsernameAvailableDto,
-	LoginDto,
-	SignupDto,
+	GetAccountRequestDto,
+	GetAccountResponseDto,
+	GetByUsernameRequestDto,
+	GetByUsernameResponseDto,
+	IsUserExistsRequestDto,
+	IsUserExistsResponseDto,
+	IsUsernameAvailableRequestDto,
+	IsUsernameAvailableResponseDto,
+	LoginRequestDto,
+	LoginResponseDto,
+	SignupRequestDto,
+	SignupResponseDto,
 } from "accounts/dto";
-import { Account } from "@gallereee/db-client";
 
 @Injectable()
 export class IAMService {
 	constructor(@Inject(IAM_SERVICE) public IAM: ClientProxy) {}
 
-	async signup(data: SignupDto): Promise<Account> {
+	async signup(data: SignupRequestDto): Promise<SignupResponseDto> {
 		return firstValueFrom(
-			this.IAM.send<Account, SignupDto>({ cmd: CMD_ACCOUNTS_SIGNUP }, data)
-		);
-	}
-
-	async login(data: LoginDto): Promise<Account> {
-		return firstValueFrom(
-			this.IAM.send<Account, LoginDto>({ cmd: CMD_ACCOUNTS_LOGIN }, data)
-		);
-	}
-
-	async isUsernameAvailable(data: IsUsernameAvailableDto): Promise<boolean> {
-		return firstValueFrom(
-			this.IAM.send<boolean, IsUsernameAvailableDto>(
-				{ cmd: CMD_ACCOUNTS_IS_USERNAME_AVAILABLE },
+			this.IAM.send<SignupResponseDto, SignupRequestDto>(
+				{ cmd: CMD_ACCOUNTS_SIGNUP },
 				data
 			)
 		);
 	}
 
-	async isUserExists(data: IsUserExistsDto): Promise<boolean> {
+	async login(data: LoginRequestDto): Promise<LoginResponseDto> {
 		return firstValueFrom(
-			this.IAM.send<boolean, IsUserExistsDto>(
+			this.IAM.send<LoginResponseDto, LoginRequestDto>(
+				{ cmd: CMD_ACCOUNTS_LOGIN },
+				data
+			)
+		);
+	}
+
+	async isUsernameAvailable(
+		data: IsUsernameAvailableRequestDto
+	): Promise<IsUsernameAvailableResponseDto> {
+		return firstValueFrom(
+			this.IAM.send<
+				IsUsernameAvailableResponseDto,
+				IsUsernameAvailableRequestDto
+			>({ cmd: CMD_ACCOUNTS_IS_USERNAME_AVAILABLE }, data)
+		);
+	}
+
+	async isUserExists(
+		data: IsUserExistsRequestDto
+	): Promise<IsUserExistsResponseDto> {
+		return firstValueFrom(
+			this.IAM.send<IsUserExistsResponseDto, IsUserExistsRequestDto>(
 				{ cmd: CMD_ACCOUNTS_IS_USER_EXISTS },
+				data
+			)
+		);
+	}
+
+	async getByUsername(
+		data: GetByUsernameRequestDto
+	): Promise<GetByUsernameResponseDto> {
+		return firstValueFrom(
+			this.IAM.send<GetByUsernameResponseDto, GetByUsernameRequestDto>(
+				{ cmd: CMD_ACCOUNTS_GET_BY_USERNAME },
+				data
+			)
+		);
+	}
+
+	async get(data: GetAccountRequestDto): Promise<GetAccountResponseDto> {
+		return firstValueFrom(
+			this.IAM.send<GetAccountResponseDto, GetAccountRequestDto>(
+				{ cmd: CMD_ACCOUNTS_GET },
 				data
 			)
 		);

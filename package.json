@@ -7,7 +7,7 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "prisma": {
-    "schema": "node_modules/@gallereee/db-client/dist/schema.prisma"
+    "schema": "./node_modules/@gallereee/db-client/dist/schema.prisma"
   },
   "repository": "https://github.com/gallereee/iam",
   "publishConfig": {

@@ -2,16 +2,25 @@ import { Controller } from "@nestjs/common";
 import { AccountsService } from "accounts/service";
 import { MessagePattern, RpcException } from "@nestjs/microservices";
 import {
+	CMD_ACCOUNTS_GET,
+	CMD_ACCOUNTS_GET_BY_USERNAME,
 	CMD_ACCOUNTS_IS_USER_EXISTS,
 	CMD_ACCOUNTS_IS_USERNAME_AVAILABLE,
 	CMD_ACCOUNTS_LOGIN,
 	CMD_ACCOUNTS_SIGNUP,
-	IsUserExistsDto,
-	IsUsernameAvailableDto,
-	LoginDto,
-	SignupDto,
+	GetAccountRequestDto,
+	GetAccountResponseDto,
+	GetByUsernameRequestDto,
+	GetByUsernameResponseDto,
+	IsUserExistsRequestDto,
+	IsUserExistsResponseDto,
+	IsUsernameAvailableRequestDto,
+	IsUsernameAvailableResponseDto,
+	LoginRequestDto,
+	LoginResponseDto,
+	SignupRequestDto,
+	SignupResponseDto,
 } from "accounts/dto";
-import { Account } from "@gallereee/db-client";
 import { AccountProvidersService } from "accountProviders/service";
 import { isNull } from "lodash";
 
@@ -23,7 +32,7 @@ export class AccountsController {
 	) {}
 
 	@MessagePattern({ cmd: CMD_ACCOUNTS_SIGNUP })
-	async signup(data: SignupDto): Promise<Account> {
+	async signup(data: SignupRequestDto): Promise<SignupResponseDto> {
 		return this.accountsService.createAccount(data);
 	}
 
@@ -31,7 +40,7 @@ export class AccountsController {
 	async login({
 		providerType,
 		externalAccountId,
-	}: LoginDto): Promise<Account | null> {
+	}: LoginRequestDto): Promise<LoginResponseDto> {
 		const accountProvider = await this.accountProvidersService.get(
 			providerType,
 			externalAccountId
@@ -47,7 +56,7 @@ export class AccountsController {
 	@MessagePattern({ cmd: CMD_ACCOUNTS_IS_USERNAME_AVAILABLE })
 	async isUsernameAvailable({
 		username,
-	}: IsUsernameAvailableDto): Promise<boolean> {
+	}: IsUsernameAvailableRequestDto): Promise<IsUsernameAvailableResponseDto> {
 		const isUsernameValid = this.accountsService.isUsernameValid(username);
 
 		if (!isUsernameValid) {
@@ -60,7 +69,23 @@ export class AccountsController {
 	}
 
 	@MessagePattern({ cmd: CMD_ACCOUNTS_IS_USER_EXISTS })
-	async isUserExists(data: IsUserExistsDto): Promise<boolean> {
-		return this.accountsService.isUserExists(data);
+	async isUserExists({
+		externalAccountId,
+	}: IsUserExistsRequestDto): Promise<IsUserExistsResponseDto> {
+		return this.accountProvidersService.isUserExistsInProvider(
+			externalAccountId
+		);
+	}
+
+	@MessagePattern({ cmd: CMD_ACCOUNTS_GET_BY_USERNAME })
+	async getByUsername({
+		username,
+	}: GetByUsernameRequestDto): Promise<GetByUsernameResponseDto> {
+		return this.accountsService.getByUsername(username);
+	}
+
+	@MessagePattern({ cmd: CMD_ACCOUNTS_GET })
+	async get({ id }: GetAccountRequestDto): Promise<GetAccountResponseDto> {
+		return this.accountsService.get({ where: { id } });
 	}
 }

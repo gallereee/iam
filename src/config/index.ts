@@ -1,6 +1,6 @@
 export default () => {
 	return {
-		host: process.env.HOST,
-		port: parseInt(process.env.PORT, 10),
+		host: process.env.IAM_HOST,
+		port: parseInt(process.env.IAM_PORT, 10),
 	};
 };

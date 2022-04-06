@@ -1,9 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {
-	IsUserExistsData,
-	SignupDataTelegramUser,
-	SignupDto,
-} from "accounts/dto";
+import { SignupDataTelegramUser, SignupRequest } from "accounts/dto";
 import { Account, AccountProviderType, Prisma } from "@gallereee/db-client";
 import { RpcException } from "@nestjs/microservices";
 import { PrismaService } from "prisma/service";
@@ -22,25 +18,15 @@ export class AccountsService {
 		return /^[A-Za-z0-9]/.test(username);
 	}
 
-	async isUserExists({
-		externalAccountId,
-	}: IsUserExistsData): Promise<boolean> {
-		const existingAccountProvider = await this.accountProvidersService.get(
-			AccountProviderType.TELEGRAM_USER,
-			externalAccountId
-		);
-
-		return !isNull(existingAccountProvider);
-	}
-
 	async createTelegramUserAccount({
 		externalAccountId,
 		username,
 		chatId,
 	}: SignupDataTelegramUser): Promise<Account> {
-		const isTelegramUserExists = await this.isUserExists({
-			externalAccountId,
-		});
+		const isTelegramUserExists =
+			await this.accountProvidersService.isUserExistsInProvider(
+				externalAccountId
+			);
 
 		if (isTelegramUserExists) {
 			throw new RpcException("Пользватель уже зарегистрирован");
@@ -72,7 +58,7 @@ export class AccountsService {
 		});
 	}
 
-	async createAccount({ providerType, data }: SignupDto): Promise<Account> {
+	async createAccount({ providerType, data }: SignupRequest): Promise<Account> {
 		const isUsernameValid = this.isUsernameValid(data.username);
 
 		if (!isUsernameValid) {
@@ -91,7 +77,7 @@ export class AccountsService {
 		}
 	}
 
-	async get(data: AccountFindUniqueArgs) {
+	async get(data: AccountFindUniqueArgs): Promise<Account | null> {
 		return this.prisma.account.findUnique(data);
 	}
 
@@ -101,5 +87,9 @@ export class AccountsService {
 		});
 
 		return isNull(existingAccount);
+	}
+
+	async getByUsername(username: Account["username"]): Promise<Account | null> {
+		return this.prisma.account.findUnique({ where: { username } });
 	}
 }

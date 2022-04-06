@@ -1,51 +1,92 @@
-import { AccountProviderType } from "@gallereee/db-client";
-import { TCPRequestCommon } from "types";
+import { Account, AccountProviderType } from "@gallereee/db-client";
+import { RequestDto } from "types";
 
 const CMD_ACCOUNTS_SIGNUP = "accounts/signup";
 const CMD_ACCOUNTS_LOGIN = "accounts/login";
 const CMD_ACCOUNTS_IS_USERNAME_AVAILABLE = "accounts/isUsernameAvailable";
 const CMD_ACCOUNTS_IS_USER_EXISTS = "accounts/isUserExists";
+const CMD_ACCOUNTS_GET_BY_USERNAME = "accounts/getByUsername";
+const CMD_ACCOUNTS_GET = "accounts/get";
+
+// Signup
 
 interface SignupDataBase {
 	externalAccountId: string;
 }
-
 interface SignupDataTelegramUser extends SignupDataBase {
 	chatId: string;
 	username?: string;
 }
-
-interface SignupTelegramUserDto {
+interface SignupTelegramUserRequest {
 	providerType: typeof AccountProviderType.TELEGRAM_USER;
 	data: SignupDataTelegramUser;
 }
+type SignupRequest = SignupTelegramUserRequest;
+type SignupRequestDto = RequestDto<SignupRequest>;
+type SignupResponseDto = Account;
 
-interface LoginTelegramUserDto extends SignupDataBase {
+// Login
+
+interface LoginTelegramUserRequest extends SignupDataBase {
 	providerType: typeof AccountProviderType.TELEGRAM_USER;
 }
+type LoginRequestDto = RequestDto<LoginTelegramUserRequest>;
+type LoginResponseDto = Account | null;
 
-type SignupDto = SignupTelegramUserDto & TCPRequestCommon;
-type LoginDto = LoginTelegramUserDto & TCPRequestCommon;
+// IsUsernameAvailable
 
-interface IsUsernameAvailableDto extends TCPRequestCommon {
-	username: string;
+interface IsUsernameAvailableRequest {
+	username: Account["username"];
 }
+type IsUsernameAvailableRequestDto = RequestDto<IsUsernameAvailableRequest>;
+type IsUsernameAvailableResponseDto = boolean;
 
-interface IsUserExistsData extends Pick<SignupDataBase, "externalAccountId"> {}
-interface IsUserExistsDto extends IsUserExistsData, TCPRequestCommon {}
+// IsUserExists
+
+interface IsUserExistsRequest
+	extends Pick<SignupDataBase, "externalAccountId"> {}
+type IsUserExistsRequestDto = RequestDto<IsUserExistsRequest>;
+type IsUserExistsResponseDto = boolean;
+
+// GetAccountByUsername
+
+interface GetByUsernameRequest {
+	username: Account["username"];
+}
+type GetByUsernameRequestDto = RequestDto<GetByUsernameRequest>;
+type GetByUsernameResponseDto = Account | null;
+
+// GetAccount
+
+interface GetAccountRequest {
+	id: Account["id"];
+}
+type GetAccountRequestDto = RequestDto<GetAccountRequest>;
+type GetAccountResponseDto = Account | null;
 
 export {
 	CMD_ACCOUNTS_SIGNUP,
 	CMD_ACCOUNTS_LOGIN,
 	CMD_ACCOUNTS_IS_USERNAME_AVAILABLE,
 	CMD_ACCOUNTS_IS_USER_EXISTS,
+	CMD_ACCOUNTS_GET_BY_USERNAME,
+	CMD_ACCOUNTS_GET,
 	AccountProviderType,
 };
 export type {
-	SignupDto,
-	LoginDto,
+	SignupRequest,
+	SignupRequestDto,
+	LoginRequestDto,
+	LoginResponseDto,
 	SignupDataTelegramUser,
-	IsUsernameAvailableDto,
-	IsUserExistsData,
-	IsUserExistsDto,
+	IsUsernameAvailableRequestDto,
+	IsUsernameAvailableResponseDto,
+	SignupResponseDto,
+	IsUserExistsRequest,
+	IsUserExistsRequestDto,
+	IsUserExistsResponseDto,
+	GetByUsernameRequestDto,
+	GetByUsernameResponseDto,
+	GetAccountRequestDto,
+	GetAccountResponseDto,
 };
