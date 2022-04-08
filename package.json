@@ -26,9 +26,8 @@
     "lint-fix": "eslint . --fix",
     "test": "jest",
     "db:migrate": "npx prisma migrate deploy",
-    "prepublishOnly": "npm run lint",
-    "preversion": "npm run lint",
-    "prepare": "npm run build-package"
+    "prepublishOnly": "npm run lint && npm run build-package",
+    "preversion": "npm run lint"
   },
   "dependencies": {
     "@gallereee/db-client": "^0.0.19",
