@@ -1,4 +1,8 @@
-import { Account } from "@gallereee/db-client";
+import {
+	Account,
+	AccountProvider,
+	AccountProviderType,
+} from "@gallereee/db-client";
 
 interface TCPRequestCommon {
 	requestId: string;
@@ -6,4 +10,5 @@ interface TCPRequestCommon {
 
 type RequestDto<Data> = Data & TCPRequestCommon;
 
-export type { TCPRequestCommon, RequestDto, Account };
+export { AccountProviderType };
+export type { TCPRequestCommon, RequestDto, Account, AccountProvider };

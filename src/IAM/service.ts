@@ -4,6 +4,7 @@ import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
 import {
 	CMD_ACCOUNTS_GET,
+	CMD_ACCOUNTS_GET_BY_EXTERNAL_ID,
 	CMD_ACCOUNTS_GET_BY_USERNAME,
 	CMD_ACCOUNTS_IS_USER_EXISTS,
 	CMD_ACCOUNTS_IS_USERNAME_AVAILABLE,
@@ -11,6 +12,8 @@ import {
 	CMD_ACCOUNTS_SIGNUP,
 	GetAccountRequestDto,
 	GetAccountResponseDto,
+	GetByExternalIdRequestDto,
+	GetByExternalIdResponseDto,
 	GetByUsernameRequestDto,
 	GetByUsernameResponseDto,
 	IsUserExistsRequestDto,
@@ -62,6 +65,17 @@ export class IAMService {
 		return firstValueFrom(
 			this.IAM.send<IsUserExistsResponseDto, IsUserExistsRequestDto>(
 				{ cmd: CMD_ACCOUNTS_IS_USER_EXISTS },
+				data
+			)
+		);
+	}
+
+	async getByExternalId(
+		data: GetByExternalIdRequestDto
+	): Promise<GetByExternalIdResponseDto> {
+		return firstValueFrom(
+			this.IAM.send<GetByExternalIdResponseDto, GetByExternalIdRequestDto>(
+				{ cmd: CMD_ACCOUNTS_GET_BY_EXTERNAL_ID },
 				data
 			)
 		);

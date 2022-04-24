@@ -3,6 +3,7 @@ import { AccountsService } from "accounts/service";
 import { MessagePattern, RpcException } from "@nestjs/microservices";
 import {
 	CMD_ACCOUNTS_GET,
+	CMD_ACCOUNTS_GET_BY_EXTERNAL_ID,
 	CMD_ACCOUNTS_GET_BY_USERNAME,
 	CMD_ACCOUNTS_IS_USER_EXISTS,
 	CMD_ACCOUNTS_IS_USERNAME_AVAILABLE,
@@ -10,6 +11,8 @@ import {
 	CMD_ACCOUNTS_SIGNUP,
 	GetAccountRequestDto,
 	GetAccountResponseDto,
+	GetByExternalIdRequestDto,
+	GetByExternalIdResponseDto,
 	GetByUsernameRequestDto,
 	GetByUsernameResponseDto,
 	IsUserExistsRequestDto,
@@ -75,6 +78,19 @@ export class AccountsController {
 		return this.accountProvidersService.isUserExistsInProvider(
 			externalAccountId
 		);
+	}
+
+	@MessagePattern({ cmd: CMD_ACCOUNTS_GET_BY_EXTERNAL_ID })
+	async getByExternalId({
+		externalAccountId,
+		type,
+	}: GetByExternalIdRequestDto): Promise<GetByExternalIdResponseDto> {
+		const accountProvider = await this.accountProvidersService.get(
+			type,
+			externalAccountId
+		);
+
+		return accountProvider.account;
 	}
 
 	@MessagePattern({ cmd: CMD_ACCOUNTS_GET_BY_USERNAME })

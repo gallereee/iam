@@ -1,10 +1,15 @@
-import { Account, AccountProviderType } from "@gallereee/db-client";
+import {
+	Account,
+	AccountProvider,
+	AccountProviderType,
+} from "@gallereee/db-client";
 import { RequestDto } from "types";
 
 const CMD_ACCOUNTS_SIGNUP = "accounts/signup";
 const CMD_ACCOUNTS_LOGIN = "accounts/login";
 const CMD_ACCOUNTS_IS_USERNAME_AVAILABLE = "accounts/isUsernameAvailable";
 const CMD_ACCOUNTS_IS_USER_EXISTS = "accounts/isUserExists";
+const CMD_ACCOUNTS_GET_BY_EXTERNAL_ID = "accounts/getByExternalId";
 const CMD_ACCOUNTS_GET_BY_USERNAME = "accounts/getByUsername";
 const CMD_ACCOUNTS_GET = "accounts/get";
 
@@ -48,6 +53,15 @@ interface IsUserExistsRequest
 type IsUserExistsRequestDto = RequestDto<IsUserExistsRequest>;
 type IsUserExistsResponseDto = boolean;
 
+// GetByExternalId
+
+interface GetByExternalIdRequest {
+	externalAccountId: AccountProvider["externalAccountId"];
+	type: AccountProvider["type"];
+}
+type GetByExternalIdRequestDto = RequestDto<GetByExternalIdRequest>;
+type GetByExternalIdResponseDto = Account | null;
+
 // GetAccountByUsername
 
 interface GetByUsernameRequest {
@@ -69,6 +83,7 @@ export {
 	CMD_ACCOUNTS_LOGIN,
 	CMD_ACCOUNTS_IS_USERNAME_AVAILABLE,
 	CMD_ACCOUNTS_IS_USER_EXISTS,
+	CMD_ACCOUNTS_GET_BY_EXTERNAL_ID,
 	CMD_ACCOUNTS_GET_BY_USERNAME,
 	CMD_ACCOUNTS_GET,
 	AccountProviderType,
@@ -85,6 +100,8 @@ export type {
 	IsUserExistsRequest,
 	IsUserExistsRequestDto,
 	IsUserExistsResponseDto,
+	GetByExternalIdRequestDto,
+	GetByExternalIdResponseDto,
 	GetByUsernameRequestDto,
 	GetByUsernameResponseDto,
 	GetAccountRequestDto,
