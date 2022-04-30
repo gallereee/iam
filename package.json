@@ -30,7 +30,7 @@
     "preversion": "npm run lint"
   },
   "dependencies": {
-    "@gallereee/db-client": "^0.0.19",
+    "@gallereee/db-client": "^0.0.20",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.0.0",
     "@nestjs/core": "^8.0.0",
