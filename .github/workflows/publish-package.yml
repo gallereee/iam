@@ -24,6 +24,8 @@ jobs:
           scope: '@gallereee'
       -
         run: npm ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       -
         run: npm publish
         env:
