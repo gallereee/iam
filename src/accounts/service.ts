@@ -63,7 +63,7 @@ export class AccountsService {
 
 		if (!isUsernameValid) {
 			throw new RpcException(
-				"Неверное имя пользователя. Используйте латинские символы и цифры."
+				"Неверное имя пользователя. Используй латинские символы и цифры."
 			);
 		}
 
